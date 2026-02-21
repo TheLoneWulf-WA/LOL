@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 
-// Replace with deployed program ID after anchor deploy
-export const LOL_PROGRAM_ID = new PublicKey("11111111111111111111111111111111");
+// Program ID from `anchor keys list` (lol_escrow)
+export const LOL_PROGRAM_ID = new PublicKey("Gxxky4YmKSaA2xN3w8h6nrfgVktB3ERNWCc8D3Qf1j6U");
 
 /**
  * Derive the match PDA.
@@ -14,17 +14,6 @@ export function getMatchPDA(creator: PublicKey, matchId: string): [PublicKey, nu
       creator.toBuffer(),
       Buffer.from(matchId),
     ],
-    LOL_PROGRAM_ID
-  );
-}
-
-/**
- * Derive the vault PDA for a match (holds escrowed assets).
- * seeds = ["vault", match_pda]
- */
-export function getVaultPDA(matchPDA: PublicKey): [PublicKey, number] {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("vault"), matchPDA.toBuffer()],
     LOL_PROGRAM_ID
   );
 }

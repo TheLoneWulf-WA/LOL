@@ -1,20 +1,33 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { useWalletStore } from "@/stores/walletStore";
+import { useWalletBalances } from "@/hooks/useWalletBalances";
 import { GameColors } from "@/constants/Colors";
 
 export default function WalletBadge() {
   const solBalance = useWalletStore((s) => s.solBalance);
   const skrBalance = useWalletStore((s) => s.skrBalance);
+  const isLoadingBalances = useWalletStore((s) => s.isLoadingBalances);
+
+  // Kick off balance + NFT fetching on mount
+  useWalletBalances();
 
   return (
     <View style={styles.container}>
       <View style={styles.badge}>
         <Text style={styles.label}>SOL</Text>
-        <Text style={styles.value}>{solBalance.toFixed(2)}</Text>
+        {isLoadingBalances ? (
+          <ActivityIndicator size="small" color={GameColors.textSecondary} />
+        ) : (
+          <Text style={styles.value}>{solBalance.toFixed(2)}</Text>
+        )}
       </View>
       <View style={styles.badge}>
         <Text style={styles.label}>SKR</Text>
-        <Text style={styles.value}>{skrBalance.toFixed(0)}</Text>
+        {isLoadingBalances ? (
+          <ActivityIndicator size="small" color={GameColors.textSecondary} />
+        ) : (
+          <Text style={styles.value}>{skrBalance.toFixed(0)}</Text>
+        )}
       </View>
     </View>
   );

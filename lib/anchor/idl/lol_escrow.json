@@ -1,0 +1,827 @@
+{
+  "address": "Gxxky4YmKSaA2xN3w8h6nrfgVktB3ERNWCc8D3Qf1j6U",
+  "metadata": {
+    "name": "lol_escrow",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "cancel_match",
+      "docs": [
+        "Cancel a match. Only the creator can cancel, and only while status is Waiting.",
+        "Returns the NFT and SKR to the creator."
+      ],
+      "discriminator": [
+        142,
+        136,
+        247,
+        45,
+        92,
+        112,
+        180,
+        83
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "path": "match_account.match_id",
+                "account": "MatchAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator_nft_mint",
+          "docs": [
+            "The creator's NFT mint (must match what was deposited)"
+          ]
+        },
+        {
+          "name": "creator_nft_token_account",
+          "docs": [
+            "Creator's token account for the NFT"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_nft_token_account",
+          "docs": [
+            "Vault holding the creator's NFT"
+          ],
+          "writable": true
+        },
+        {
+          "name": "skr_mint",
+          "docs": [
+            "SKR mint"
+          ]
+        },
+        {
+          "name": "creator_skr_token_account",
+          "docs": [
+            "Creator's SKR token account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_skr_token_account",
+          "docs": [
+            "Vault holding SKR wager"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_match",
+      "docs": [
+        "Creates a new match. The creator deposits an NFT and SKR tokens into",
+        "PDA-owned vault accounts."
+      ],
+      "discriminator": [
+        107,
+        2,
+        184,
+        145,
+        70,
+        142,
+        17,
+        165
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator_nft_mint",
+          "docs": [
+            "The NFT mint being wagered by the creator."
+          ]
+        },
+        {
+          "name": "creator_nft_token_account",
+          "docs": [
+            "Creator's token account holding the NFT."
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_nft_token_account",
+          "docs": [
+            "PDA-owned vault to hold the creator's NFT during the match."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "match_account"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator_nft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "skr_mint",
+          "docs": [
+            "The SKR token mint."
+          ]
+        },
+        {
+          "name": "creator_skr_token_account",
+          "docs": [
+            "Creator's SKR token account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_skr_token_account",
+          "docs": [
+            "PDA-owned vault to hold SKR wagers."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "match_account"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "skr_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "string"
+        },
+        {
+          "name": "board_seed",
+          "type": "u64"
+        },
+        {
+          "name": "skr_wager",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "join_match",
+      "docs": [
+        "Opponent joins the match by depositing their NFT and matching SKR wager."
+      ],
+      "discriminator": [
+        244,
+        8,
+        47,
+        130,
+        192,
+        59,
+        179,
+        44
+      ],
+      "accounts": [
+        {
+          "name": "opponent",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        },
+        {
+          "name": "opponent_nft_mint",
+          "docs": [
+            "The NFT mint being wagered by the opponent."
+          ]
+        },
+        {
+          "name": "opponent_nft_token_account",
+          "docs": [
+            "Opponent's token account holding the NFT."
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_opponent_nft_token_account",
+          "docs": [
+            "PDA-owned vault to hold the opponent's NFT during the match."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "match_account"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "opponent_nft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "skr_mint",
+          "docs": [
+            "The SKR token mint."
+          ]
+        },
+        {
+          "name": "opponent_skr_token_account",
+          "docs": [
+            "Opponent's SKR token account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_skr_token_account",
+          "docs": [
+            "The existing vault SKR token account (created during create_match)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "submit_result",
+      "docs": [
+        "Submit the calling player's score. When both scores are in, settle the",
+        "match: the higher scorer (ties go to creator) receives both NFTs and",
+        "both SKR wagers from the vaults."
+      ],
+      "discriminator": [
+        240,
+        42,
+        89,
+        180,
+        10,
+        239,
+        9,
+        214
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        },
+        {
+          "name": "creator_nft_mint"
+        },
+        {
+          "name": "opponent_nft_mint"
+        },
+        {
+          "name": "skr_mint"
+        },
+        {
+          "name": "vault_creator_nft_token_account",
+          "docs": [
+            "Vault holding creator's NFT"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_opponent_nft_token_account",
+          "docs": [
+            "Vault holding opponent's NFT"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_skr_token_account",
+          "docs": [
+            "Vault holding SKR wagers"
+          ],
+          "writable": true
+        },
+        {
+          "name": "creator_nft_token_account",
+          "docs": [
+            "Creator's token account for their own NFT"
+          ],
+          "writable": true
+        },
+        {
+          "name": "creator_skr_token_account",
+          "docs": [
+            "Creator's SKR token account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "opponent_nft_token_account",
+          "docs": [
+            "Opponent's token account for their own NFT"
+          ],
+          "writable": true
+        },
+        {
+          "name": "opponent_skr_token_account",
+          "docs": [
+            "Opponent's SKR token account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "creator_receive_opponent_nft",
+          "docs": [
+            "Creator's token account to receive opponent's NFT (if creator wins)",
+            "because init_if_needed with dynamic authority from match_account fields",
+            "is not supported by Anchor's derive macro."
+          ],
+          "writable": true
+        },
+        {
+          "name": "opponent_receive_creator_nft",
+          "docs": [
+            "Opponent's token account to receive creator's NFT (if opponent wins)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "score",
+          "type": "u32"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "MatchAccount",
+      "discriminator": [
+        235,
+        36,
+        243,
+        39,
+        81,
+        16,
+        144,
+        87
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidMatchStatus",
+      "msg": "Match is not in the expected status"
+    },
+    {
+      "code": 6001,
+      "name": "ScoreAlreadySubmitted",
+      "msg": "Player has already submitted a score"
+    },
+    {
+      "code": 6002,
+      "name": "UnauthorizedPlayer",
+      "msg": "Unauthorized player"
+    },
+    {
+      "code": 6003,
+      "name": "OnlyCreatorCanCancel",
+      "msg": "Only the creator can cancel"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidWager",
+      "msg": "Invalid SKR wager amount"
+    },
+    {
+      "code": 6005,
+      "name": "MatchIdTooLong",
+      "msg": "Match ID exceeds maximum length"
+    }
+  ],
+  "types": [
+    {
+      "name": "MatchAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "opponent",
+            "type": "pubkey"
+          },
+          {
+            "name": "match_id",
+            "type": "string"
+          },
+          {
+            "name": "board_seed",
+            "type": "u64"
+          },
+          {
+            "name": "skr_wager",
+            "type": "u64"
+          },
+          {
+            "name": "creator_nft_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "opponent_nft_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator_score",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "opponent_score",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "MatchStatus"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MatchStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Waiting"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Settled"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    }
+  ]
+}

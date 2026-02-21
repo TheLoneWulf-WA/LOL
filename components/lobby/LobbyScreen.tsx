@@ -31,6 +31,14 @@ export default function LobbyScreen() {
           <Text style={styles.createButtonText}>Create Match</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.quickPlayButton}
+          onPress={() => navigateToMatch(String(Date.now()))}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.quickPlayButtonText}>Quick Play (Practice)</Text>
+        </TouchableOpacity>
+
         <View style={styles.secondaryActions}>
           <TouchableOpacity
             style={styles.secondaryButton}
@@ -120,6 +128,19 @@ const styles = StyleSheet.create({
   createButtonText: {
     color: "#fff",
     fontSize: 18,
+    fontFamily: "Inter_600SemiBold",
+  },
+  quickPlayButton: {
+    backgroundColor: GameColors.secondary,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: GameColors.accent,
+  },
+  quickPlayButtonText: {
+    color: GameColors.accent,
+    fontSize: 16,
     fontFamily: "Inter_600SemiBold",
   },
   secondaryActions: {
