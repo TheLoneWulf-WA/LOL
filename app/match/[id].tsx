@@ -30,6 +30,7 @@ import {
 import { getMatchPDA } from "@/lib/anchor/pda";
 import { sendTransaction } from "@/lib/solana/wallet";
 import { SKR_MINT } from "@/lib/solana/skr";
+import { useStatsStore } from "@/stores/statsStore";
 import type { OnChainMatch } from "@/lib/game/types";
 
 // ---------------------------------------------------------------------------
@@ -369,6 +370,32 @@ export default function MatchScreen() {
   // Derived state
   // ---------------------------------------------------------------------------
   const isGameOver = board.length > 0 && movesRemaining <= 0;
+
+  // ---------------------------------------------------------------------------
+  // Track stats when game ends
+  // ---------------------------------------------------------------------------
+  const statsRecorded = useRef(false);
+  useEffect(() => {
+    if (!isGameOver || statsRecorded.current) return;
+    statsRecorded.current = true;
+
+    const { incrementGamesPlayed, addScore, updateHighScore } =
+      useStatsStore.getState();
+    incrementGamesPlayed();
+    addScore(score);
+    updateHighScore(score);
+  }, [isGameOver, score]);
+
+  // Track wins when settled phase reveals we won
+  const winRecorded = useRef(false);
+  useEffect(() => {
+    if (phase !== "settled" || winRecorded.current || !currentMatch || !myPubkey)
+      return;
+    if (currentMatch.winner === myPubkey) {
+      winRecorded.current = true;
+      useStatsStore.getState().incrementGamesWon();
+    }
+  }, [phase, currentMatch, myPubkey]);
 
   // ---------------------------------------------------------------------------
   // Render helpers
