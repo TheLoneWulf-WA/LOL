@@ -6,7 +6,9 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:apk": "eas build --platform android --profile preview --local",
+    "build:dev": "eas build --platform android --profile development --local"
   },
   "dependencies": {
     "@coral-xyz/borsh": "^0.32.1",

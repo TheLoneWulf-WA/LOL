@@ -1,133 +1,294 @@
-# Privy + Expo Starter
+# Land of Leal
 
-This example showcases how to get started using Privy's Expo SDK inside an Expo React Native application.
+**Match-3 NFT puzzle game on Solana Mobile**
+
+Land of Leal is a competitive match-3 puzzle game built for Solana Mobile. Players stake NFTs and SKR tokens, compete on deterministic seeded boards, and settle results entirely on-chain through an Anchor escrow program. The higher score wins both NFTs and the full SKR wager.
+
+---
+
+## Hackathon
+
+| | |
+|---|---|
+| **Event** | Monolith Solana Mobile Hackathon |
+| **Category** | Gaming / NFT / SKR Integration |
+| **Deadline** | March 9, 2026 |
+| **SKR Token** | Yes -- wager system using SKR mint `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3` |
+
+---
+
+## Features
+
+- **Match-3 puzzle gameplay** with 6 elemental tile types (Fire, Water, Earth, Air, Light, Dark) on a 6x6 board
+- **On-chain match creation and settlement** via a custom Anchor escrow program with 4 instructions
+- **NFT staking in escrow** -- both players deposit an NFT into a PDA vault during a match
+- **SKR token wagering** -- configurable SKR stakes locked in escrow alongside NFTs
+- **Deterministic seeded boards** -- both players generate the identical board from the same on-chain seed using Mulberry32 PRNG
+- **Combo and cascade scoring** -- chain reactions multiply points at 1.5x per cascade level
+- **Privy embedded wallet** -- SMS, passkey, and OAuth login with no external wallet app required
+- **Helius DAS API integration** -- fetch and display player NFT collections for stake selection
+- **Real-time match discovery** -- lobby polls on-chain `getProgramAccounts` to find open matches
+- **Practice mode** -- quick play with a local seed for offline gameplay without staking
+
+---
+
+## How It Works
+
+Land of Leal follows a five-step match lifecycle, all settled through the on-chain escrow program:
+
+```
+1. Create Match    Player A stakes an NFT + SKR tokens, generating a seeded match PDA
+        |
+2. Opponent Joins  Player B deposits a matching NFT + SKR stake into the same escrow
+        |
+3. Play            Both players independently play the same deterministic board (20 moves)
+        |
+4. Submit Scores   Each player submits their final score on-chain via submit_result
+        |
+5. Settlement      The program compares scores and transfers all escrowed assets to the winner
+```
+
+Both players receive the same board seed from the match PDA. The Mulberry32 PRNG guarantees identical board generation and cascade fills across clients. Scores are submitted on-chain, and the Anchor program handles winner determination and asset distribution in a single atomic transaction.
+
+---
+
+## Architecture
+
+```
++--------------------------+       +--------------------+
+|   Expo React Native App  |       |  Solana Devnet     |
+|                          |       |                    |
+|  Expo Router (screens)   |       |  lol_escrow        |
+|  Zustand (state mgmt)    | <---> |  Anchor Program    |
+|  Reanimated (animations) |       |  (PDA escrow)      |
+|  Privy SDK (auth/wallet) |       |                    |
+|  Helius DAS (NFT data)   |       +--------------------+
++--------------------------+
+```
+
+- **Expo React Native** with Expo Router for file-based navigation
+- **Zustand** for client-side state management (game state, match state, wallet state)
+- **react-native-reanimated** for 60fps tile swap and cascade animations
+- **Anchor program** (`lol_escrow`) for on-chain match escrow, score submission, and settlement
+- **Privy SDK** for authentication (SMS, passkey, Apple, OAuth) and embedded Solana wallet
+- **Helius DAS API** for fetching NFT metadata and collection data
+- **Mulberry32 PRNG** for deterministic, verifiable board generation from on-chain seeds
+
+---
+
+## Tech Stack
+
+| Technology | Purpose | Version |
+|---|---|---|
+| Expo | React Native framework and build tooling | 54 |
+| React Native | Cross-platform mobile UI | 0.81.4 |
+| Expo Router | File-based navigation with typed routes | 6.0.8 |
+| TypeScript | Type-safe development | 5.9.2 |
+| Zustand | Lightweight state management | 5.0.11 |
+| react-native-reanimated | High-performance animations | 4.1.0 |
+| @privy-io/expo | Auth and embedded wallet SDK | 0.58.1 |
+| @solana/web3.js | Solana RPC client | 1.98.4 |
+| @solana/spl-token | SPL Token program interactions | 0.4.14 |
+| @coral-xyz/borsh | Borsh serialization for Anchor | 0.32.1 |
+| expo-haptics | Tactile feedback on tile interactions | 15.0.8 |
+| react-native-gesture-handler | Touch gesture handling | 2.28.0 |
+
+---
 
 ## Getting Started
 
-### 1. Clone the Project
+### Prerequisites
+
+- Node.js 18+
+- iOS Simulator (Xcode) or Android Emulator
+- An Expo development build (Expo Go is **not** supported due to native module dependencies)
+
+### Installation
 
 ```bash
-mkdir -p privy-expo-starter && curl -L https://github.com/privy-io/privy-examples/archive/main.tar.gz | tar -xz --strip=2 -C privy-expo-starter examples-main/privy-expo-starter && cd privy-expo-starter
-```
-
-### 2. Install Dependencies
-
-```bash
+git clone https://github.com/your-username/land-of-leal.git
+cd land-of-leal
 npm install
 ```
 
-### 3. Configure Environment
+### Configuration
 
-Update the `app.json` file with your Privy app credentials:
+Update `app.json` with your credentials:
 
 ```json
 {
   "expo": {
     "extra": {
-      "privyAppId": "your_app_id_here",
-      "privyClientId": "your_client_id_here",
-      "passkeyAssociatedDomain": "https://your-associated-domain.com"
-    },
-    "ios": {
-      "bundleIdentifier": "com.yourcompany.yourapp",
-      "associatedDomains": ["webcredentials:your-associated-domain.com"]
-    },
-    "android": {
-      "package": "com.yourcompany.yourapp"
+      "privyAppId": "your_privy_app_id",
+      "privyClientId": "your_privy_client_id",
+      "heliusApiKey": "your_helius_api_key"
     }
   }
 }
 ```
 
-**Important:**
-
-- Configure an app client in your [Privy Dashboard](https://dashboard.privy.io/apps?page=settings&setting=clients)
-- Add 'exp' to Allowed app URL schemas in the mobile client in your [Privy Dashboard](https://dashboard.privy.io/apps?page=settings&setting=clients)
-- For Expo Go development, add `host.exp.Exponent` to Allowed app identifiers in your Dashboard
-- For iOS passkey support, configure the `associatedDomains` and `passkeyAssociatedDomain`
-
-### 4. Start Development Server
+### Running
 
 ```bash
-npm start
+npx expo start --dev-client
 ```
 
-This will start the Expo development server. You can then:
+> **Note:** This project requires a custom dev client build. Expo Go will not work because the app depends on native modules (expo-secure-store, react-native-passkeys, expo-haptics). Run `npx expo run:ios` or `npx expo run:android` to create a development build first.
 
-- Press `i` for iOS simulator
-- Press `a` for Android emulator
-- Scan QR code with Expo Go app on your device
+---
 
-## Core Functionality
+## Solana Program
 
-### 1. Login with Privy
+| | |
+|---|---|
+| **Program ID** | `Gxxky4YmKSaA2xN3w8h6nrfgVktB3ERNWCc8D3Qf1j6U` |
+| **Network** | Devnet |
+| **Framework** | Anchor |
+| **SKR Mint** | `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3` |
 
-Login or sign up using Privy's pre-built modals optimized for mobile.
+### Instructions
 
-[`app/index.tsx`](./app/index.tsx)
+| Instruction | Description |
+|---|---|
+| `create_match` | Creator stakes NFT + SKR into a PDA escrow vault. Stores board seed, wager amount, and NFT mint. |
+| `join_match` | Opponent deposits matching NFT + SKR stake. Transitions match status from Waiting to Active. |
+| `submit_result` | Player submits their final score. When both scores are in, the program settles the match and distributes assets to the winner. |
+| `cancel_match` | Creator can cancel a Waiting match to reclaim staked assets before an opponent joins. |
 
-```tsx
-import { usePrivy } from "@privy-io/expo";
-const { user } = usePrivy();
-// User is automatically shown LoginScreen if not authenticated
+### PDA Derivation
+
+Match accounts are derived as Program Derived Addresses:
+
+```
+seeds = ["match", creator_pubkey, match_id_bytes]
+program = Gxxky4YmKSaA2xN3w8h6nrfgVktB3ERNWCc8D3Qf1j6U
 ```
 
-### 2. Create Multi-Chain Wallets
+Vault token accounts (for NFTs and SKR) are Associated Token Accounts owned by the match PDA, enabling the program to custody assets during gameplay.
 
-Programmatically create embedded wallets for multiple blockchains. Supports Ethereum, Solana, Bitcoin, and more.
+---
 
-[`components/userManagement/Wallets.tsx`](./components/userManagement/Wallets.tsx)
+## Project Structure
 
-```tsx
-import {
-  useEmbeddedEthereumWallet,
-  useEmbeddedSolanaWallet,
-} from "@privy-io/expo";
-import { useCreateWallet } from "@privy-io/expo/extended-chains";
-
-const { create: createEthereumWallet } = useEmbeddedEthereumWallet();
-const { create: createSolanaWallet } = useEmbeddedSolanaWallet();
-const { createWallet } = useCreateWallet();
-
-// Create Ethereum wallet
-createEthereumWallet({ createAdditional: true });
-
-// Create Solana wallet
-createSolanaWallet({ createAdditional: true, recoveryMethod: "privy" });
-
-// Create Bitcoin/other chain wallets
-createWallet({ chainType: "bitcoin-segwit" });
+```
+land-of-leal/
+|-- app/                        # Expo Router screens
+|   |-- _layout.tsx             # Root layout (PrivyProvider, fonts)
+|   |-- index.tsx               # Auth boundary (login vs lobby)
+|   |-- collection.tsx          # NFT collection viewer
+|   |-- profile.tsx             # Player profile and wallet info
+|   |-- match/
+|       |-- create.tsx          # Match creation (NFT picker, SKR wager)
+|       |-- [id].tsx            # Match lifecycle (join, play, submit, settle)
+|-- components/
+|   |-- game/                   # Game UI components
+|   |   |-- Board.tsx           # 6x6 interactive game board
+|   |   |-- Tile.tsx            # Animated tile with gesture handling
+|   |   |-- TileIcon.tsx        # SVG element icons per tile type
+|   |   |-- ScoreBar.tsx        # Score, moves remaining, combo display
+|   |   |-- GameOverView.tsx    # End-of-game score submission prompt
+|   |   |-- ResultView.tsx      # Win/loss/tie result display
+|   |   |-- WaitingView.tsx     # Waiting for opponent screen
+|   |   |-- NFTCard.tsx         # NFT display card
+|   |   |-- NFTPicker.tsx       # NFT selection for staking
+|   |   |-- SKRWagerInput.tsx   # SKR wager amount input
+|   |   |-- Logo.tsx            # Animated game logo
+|   |-- lobby/                  # Lobby and match discovery
+|   |   |-- LobbyScreen.tsx     # Main lobby with match lists
+|   |   |-- MatchCard.tsx       # Match preview card
+|   |   |-- WalletBadge.tsx     # Wallet address display
+|   |-- login/                  # Authentication screens
+|   |-- userManagement/         # Account linking and wallet creation
+|   |-- walletActions/          # Chain-specific transaction UIs
+|-- lib/
+|   |-- game/                   # Game engine (pure logic, no UI)
+|   |   |-- engine.ts           # Board generation, matching, cascades, scoring
+|   |   |-- types.ts            # Game type definitions
+|   |   |-- constants.ts        # Board size, scoring rules, animation timing
+|   |   |-- prng.ts             # Mulberry32 deterministic PRNG
+|   |-- anchor/                 # On-chain program interaction
+|   |   |-- client.ts           # Transaction builders and account deserialization
+|   |   |-- pda.ts              # PDA derivation helpers
+|   |-- solana/                 # Solana utilities
+|   |   |-- connection.ts       # Devnet RPC connection
+|   |   |-- wallet.ts           # Transaction signing and sending
+|   |   |-- skr.ts              # SKR token balance queries
+|   |   |-- retry.ts            # Transaction retry logic
+|   |-- nft/
+|   |   |-- helius.ts           # Helius DAS API for NFT fetching
+|   |-- haptics.ts              # Haptic feedback utilities
+|-- stores/                     # Zustand state stores
+|   |-- gameStore.ts            # Game board state, score, moves
+|   |-- matchStore.ts           # On-chain match state, lobby data
+|   |-- walletStore.ts          # Wallet balances, NFT holdings
+|   |-- statsStore.ts           # Player statistics
+|-- hooks/                      # Custom React hooks
+|   |-- useMatchDiscovery.ts    # Polls on-chain matches for lobby
+|   |-- useWalletBalances.ts    # SOL and SKR balance tracking
+|-- anchor/
+|   |-- lol_escrow/             # Anchor program source
+|-- constants/
+|   |-- Colors.ts               # Theme and game color definitions
+|-- entrypoint.js               # Polyfill loader (must run before Expo Router)
 ```
 
-### 3. Send Transactions
+---
 
-Send transactions on EVM-compatible chains with native mobile UX.
+## Game Engine Details
 
-[`components/walletActions/EVMWalletActions.tsx`](./components/walletActions/EVMWalletActions.tsx)
+The game engine is a pure TypeScript module with no UI dependencies, making it deterministic and testable.
 
-```tsx
-import { useEmbeddedEthereumWallet } from "@privy-io/expo";
+- **Board**: 6x6 grid with 6 tile types
+- **Moves**: 20 moves per match
+- **Scoring**: 10 points per matched tile, multiplied by 1.5x for each cascade level
+- **Cascades**: After a match is cleared and gravity fills gaps, new matches trigger automatically with increasing multipliers
+- **Board Generation**: Seeded Mulberry32 PRNG ensures no pre-existing matches on initial board
+- **Fill Determinism**: Cascade refills use `baseSeed + turnIndex * 1000 + cascadeLevel` to guarantee identical results across clients
+- **Validation**: Only adjacent swaps that produce at least one match are accepted
 
-const { wallets } = useEmbeddedEthereumWallet();
-const wallet = wallets?.[0];
-const provider = await wallet?.getProvider?.();
+---
 
-// Sign and send transaction
-const response = await provider.request({
-  method: "eth_sendTransaction",
-  params: [
-    {
-      from: wallet.address,
-      to: "0x0000000000000000000000000000000000000000",
-      value: "1",
-    },
-  ],
-});
-```
+## Judging Criteria Alignment
 
-## Relevant Links
+### Technical Depth
+- Custom Anchor escrow program with PDA-based match accounts and vault token custody
+- Deterministic game engine using seeded PRNG for verifiable fair play across clients
+- Borsh serialization for direct on-chain account deserialization without IDL dependency
+- Full match lifecycle managed through on-chain state transitions (Waiting, Active, Settled, Cancelled)
 
-- [Privy Dashboard](https://dashboard.privy.io)
-- [Privy Documentation](https://docs.privy.io)
-- [Expo SDK](https://www.npmjs.com/package/@privy-io/expo)
-- [Expo Documentation](https://docs.expo.dev/)
+### Mobile Optimization
+- 60fps animations via react-native-reanimated for tile swaps, cascades, and score popups
+- Haptic feedback on tile selection, matches, and combos using expo-haptics
+- Responsive layout designed for portrait mobile play
+- Privy embedded wallet eliminates the need to switch to an external wallet app
+
+### Creative Solana Usage
+- NFTs staked as competitive collateral in PDA escrow vaults
+- SKR token wagering with configurable stake amounts
+- Deterministic board seeds stored on-chain enable future replay verification
+- Match discovery via `getProgramAccounts` with discriminator filtering
+- Cross-NFT settlement: winner receives the opponent's staked NFT directly
+
+### Vision and Clarity
+- Clear game loop: create, join, play, submit, settle
+- Expandable architecture: game engine is decoupled from UI and blockchain layers
+- Practice mode for onboarding without requiring tokens or NFTs
+- Lobby-based matchmaking with pull-to-refresh discovery
+
+---
+
+## Future Roadmap
+
+- **Tournament system** -- bracket-style competitions with prize pools
+- **AI opponents** -- single-player matches against on-chain verifiable AI scores
+- **Leaderboards** -- global and seasonal rankings stored on-chain
+- **Saga dApp Store publishing** -- native distribution through Solana Mobile dApp Store
+- **Cross-platform support** -- Android build alongside iOS
+- **Replay verification** -- reconstruct and verify games from on-chain move logs
+- **Additional game modes** -- timed challenges, special element boards, power-ups
+
+---
+
+## License
+
+MIT

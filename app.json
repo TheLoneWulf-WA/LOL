@@ -29,7 +29,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0F0B1E"
       },
-      "package": "com.landofleal.app"
+      "package": "com.landofleal.app",
+      "versionCode": 1
     },
     "extra": {
       "privyAppId": "cmlvjiwj900cg0cl517cvw39l",

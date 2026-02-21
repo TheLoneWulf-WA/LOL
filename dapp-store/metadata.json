@@ -1,0 +1,15 @@
+{
+  "name": "Land of Leal",
+  "short_description": "Match-3 NFT puzzle game on Solana",
+  "long_description": "Land of Leal is a match-3 puzzle game built on Solana. Swap and match mystical gems across enchanted boards to earn rewards. Features embedded Solana wallets via Privy, on-chain game state, and NFT integration. Built for the Monolith Solana Mobile Hackathon, Land of Leal brings casual puzzle gaming to the Solana mobile ecosystem with smooth animations, haptic feedback, and a dark fantasy theme.",
+  "category": "games",
+  "urls": {
+    "website": "https://github.com/TheLoneWulf-WA/LOL",
+    "repository": "https://github.com/TheLoneWulf-WA/LOL"
+  },
+  "solana_mobile_features": ["skt_token"],
+  "release": {
+    "version": "1.0.0",
+    "release_notes": "Initial release for Monolith Hackathon"
+  }
+}
