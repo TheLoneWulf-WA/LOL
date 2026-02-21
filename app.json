@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "@privy-io/expo-starter",
-    "slug": "expo-starter",
+    "name": "Land of Leal",
+    "slug": "land-of-leal",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,7 @@
     "ios": {
       "usesAppleSignIn": true,
       "supportsTablet": true,
-      "bundleIdentifier": "dev.privy.example",
+      "bundleIdentifier": "com.landofleal.app",
       "associatedDomains": ["webcredentials:<your-associated-domain>"],
       "infoPlist": {
         "NSAppTransportSecurity": {
@@ -28,12 +28,13 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "dev.privy.example"
+      "package": "com.landofleal.app"
     },
     "extra": {
       "privyAppId": "cmlvjiwj900cg0cl517cvw39l",
       "privyClientId": "client-WY6W4FEhCEWDzLUzJXFHiyCotafD1NYDTAihp6v5Wt6S6",
-      "passkeyAssociatedDomain": "https://<your-associated-domain>"
+      "passkeyAssociatedDomain": "https://<your-associated-domain>",
+      "heliusApiKey": "YOUR_HELIUS_API_KEY"
     },
     "plugins": [
       "expo-router",

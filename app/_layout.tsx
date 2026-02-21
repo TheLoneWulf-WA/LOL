@@ -8,6 +8,7 @@ import {
   Inter_600SemiBold,
 } from "@expo-google-fonts/inter";
 import { useFonts } from "expo-font";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function RootLayout() {
   useFonts({
@@ -16,14 +17,20 @@ export default function RootLayout() {
     Inter_600SemiBold,
   });
   return (
-    <PrivyProvider
-      appId={Constants.expoConfig?.extra?.privyAppId}
-      clientId={Constants.expoConfig?.extra?.privyClientId}
-    >
-      <Stack>
-        <Stack.Screen name="index" />
-      </Stack>
-      <PrivyElements />
-    </PrivyProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PrivyProvider
+        appId={Constants.expoConfig?.extra?.privyAppId}
+        clientId={Constants.expoConfig?.extra?.privyClientId}
+      >
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="match/create" />
+          <Stack.Screen name="match/[id]" />
+          <Stack.Screen name="collection" />
+          <Stack.Screen name="profile" />
+        </Stack>
+        <PrivyElements />
+      </PrivyProvider>
+    </GestureHandlerRootView>
   );
 }
