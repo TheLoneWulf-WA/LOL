@@ -6,8 +6,10 @@ import {
   Inter_400Regular,
   Inter_500Medium,
   Inter_600SemiBold,
+  Inter_700Bold,
 } from "@expo-google-fonts/inter";
 import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -16,6 +18,7 @@ export default function RootLayout() {
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
+    Inter_700Bold,
   });
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -33,6 +36,7 @@ export default function RootLayout() {
           </Stack>
           <PrivyElements />
         </PrivyProvider>
+        <StatusBar style="light" />
       </ErrorBoundary>
     </GestureHandlerRootView>
   );

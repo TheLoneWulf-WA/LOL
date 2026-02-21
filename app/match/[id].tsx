@@ -21,6 +21,7 @@ import ScoreBar from "@/components/game/ScoreBar";
 import GameOverView from "@/components/game/GameOverView";
 import WaitingView from "@/components/game/WaitingView";
 import ResultView from "@/components/game/ResultView";
+import Logo from "@/components/game/Logo";
 import { fetchMatchAccount } from "@/lib/anchor/client";
 import {
   buildJoinMatchTransaction,
@@ -375,11 +376,12 @@ export default function MatchScreen() {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <TouchableOpacity onPress={() => router.back()}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Text style={styles.backArrow}>{"\u2190"}</Text>
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>Land of Leal</Text>
-      <View style={{ width: 40 }} />
+      <Logo size="small" animated={false} />
+      <View style={{ width: 60 }} />
     </View>
   );
 
@@ -389,8 +391,16 @@ export default function MatchScreen() {
       <SafeAreaView style={styles.container}>
         {renderHeader()}
         <View style={styles.centerContent}>
-          <ActivityIndicator size="large" color={GameColors.accent} />
-          <Text style={styles.loadingText}>Loading match...</Text>
+          <View style={styles.loadingCard}>
+            <Logo size="large" animated />
+            <View style={styles.loadingSpinnerRow}>
+              <ActivityIndicator size="large" color={GameColors.brandPurple} />
+            </View>
+            <Text style={styles.loadingText}>Preparing the battlefield...</Text>
+            <Text style={styles.loadingSubtext}>
+              Loading match data from Solana
+            </Text>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -402,14 +412,18 @@ export default function MatchScreen() {
       <SafeAreaView style={styles.container}>
         {renderHeader()}
         <View style={styles.centerContent}>
-          <Text style={styles.errorText}>{errorMsg}</Text>
-          <TouchableOpacity
-            style={styles.lobbyButton}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.lobbyButtonText}>Back to Lobby</Text>
-          </TouchableOpacity>
+          <View style={styles.errorCard}>
+            <Text style={styles.errorIcon}>{"\u26A0"}</Text>
+            <Text style={styles.errorTitle}>Something went wrong</Text>
+            <Text style={styles.errorText}>{errorMsg}</Text>
+            <TouchableOpacity
+              style={styles.lobbyButton}
+              onPress={() => router.back()}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.lobbyButtonText}>Back to Lobby</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -483,11 +497,24 @@ export default function MatchScreen() {
       <SafeAreaView style={styles.container}>
         {renderHeader()}
         <View style={styles.centerContent}>
-          <ActivityIndicator size="large" color={GameColors.accent} />
-          <Text style={styles.loadingText}>Joining match...</Text>
-          <Text style={styles.loadingSubtext}>
-            Processing transaction on Solana
-          </Text>
+          <View style={styles.joiningCard}>
+            <ActivityIndicator size="large" color={GameColors.brandPurple} />
+            <Text style={styles.joiningTitle}>Entering the Arena</Text>
+            <Text style={styles.joiningSubtext}>
+              Staking your NFT and SKR tokens on Solana...
+            </Text>
+            <View style={styles.joiningSteps}>
+              <Text style={styles.joiningStep}>
+                {"\u2713"} Building transaction
+              </Text>
+              <Text style={styles.joiningStepActive}>
+                {"\u25CB"} Awaiting confirmation
+              </Text>
+              <Text style={styles.joiningStepPending}>
+                {"\u25CB"} Starting match
+              </Text>
+            </View>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -500,18 +527,23 @@ export default function MatchScreen() {
         {renderHeader()}
         <View style={styles.centerContent}>
           <View style={styles.submittedCard}>
+            <Text style={styles.submittedBadge}>{"\u2713"} ON-CHAIN</Text>
             <Text style={styles.submittedTitle}>Score Submitted!</Text>
-            <Text style={styles.submittedScore}>{score}</Text>
+            <View style={styles.submittedScoreContainer}>
+              <Text style={styles.submittedScoreLabel}>Your Score</Text>
+              <Text style={styles.submittedScore}>{score}</Text>
+            </View>
+            <View style={styles.submittedDivider} />
             <ActivityIndicator
               size="large"
-              color={GameColors.accent}
-              style={{ marginVertical: 16 }}
+              color={GameColors.brandPurple}
+              style={{ marginVertical: 12 }}
             />
             <Text style={styles.submittedWaiting}>
-              Waiting for opponent to submit their score...
+              Waiting for opponent to finish playing...
             </Text>
             <Text style={styles.submittedHint}>
-              This screen will update automatically
+              Results will appear automatically once both scores are in
             </Text>
           </View>
         </View>
@@ -562,17 +594,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 8,
-    marginBottom: 16,
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    minWidth: 60,
+  },
+  backArrow: {
+    color: GameColors.primary,
+    fontSize: 18,
+    fontFamily: "Inter_500Medium",
   },
   backText: {
     color: GameColors.primary,
     fontSize: 16,
     fontFamily: "Inter_500Medium",
-  },
-  title: {
-    color: GameColors.textPrimary,
-    fontSize: 20,
-    fontFamily: "Inter_600SemiBold",
   },
   boardArea: {
     flex: 1,
@@ -585,30 +624,64 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
   },
+
+  // Loading phase
+  loadingCard: {
+    alignItems: "center",
+    gap: 16,
+    paddingHorizontal: 24,
+  },
+  loadingSpinnerRow: {
+    marginTop: 8,
+  },
   loadingText: {
     color: GameColors.textPrimary,
     fontSize: 18,
     fontFamily: "Inter_600SemiBold",
-    marginTop: 16,
+    textAlign: "center",
   },
   loadingSubtext: {
     color: GameColors.textSecondary,
     fontSize: 14,
     fontFamily: "Inter_400Regular",
-    marginTop: 8,
+    textAlign: "center",
+  },
+
+  // Error phase
+  errorCard: {
+    backgroundColor: GameColors.cardBackground,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: GameColors.danger + "60",
+    padding: 28,
+    width: "100%",
+    maxWidth: 340,
+    alignItems: "center",
+  },
+  errorIcon: {
+    fontSize: 40,
+    marginBottom: 12,
+  },
+  errorTitle: {
+    color: GameColors.textPrimary,
+    fontSize: 20,
+    fontFamily: "Inter_700Bold",
+    marginBottom: 8,
   },
   errorText: {
-    color: GameColors.danger,
-    fontSize: 16,
-    fontFamily: "Inter_500Medium",
+    color: GameColors.textSecondary,
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
     textAlign: "center",
     marginBottom: 24,
+    lineHeight: 20,
   },
   lobbyButton: {
+    width: "100%",
     backgroundColor: GameColors.primary,
     paddingVertical: 14,
     paddingHorizontal: 32,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
   },
   lobbyButtonText: {
@@ -643,7 +716,7 @@ const styles = StyleSheet.create({
   joinDetails: {
     width: "100%",
     backgroundColor: GameColors.boardBackground,
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 16,
     marginBottom: 20,
   },
@@ -668,7 +741,7 @@ const styles = StyleSheet.create({
   joinButton: {
     width: "100%",
     backgroundColor: GameColors.success,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingVertical: 14,
     alignItems: "center",
     marginBottom: 12,
@@ -684,7 +757,7 @@ const styles = StyleSheet.create({
   cancelJoinButton: {
     width: "100%",
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: GameColors.textSecondary,
     alignItems: "center",
@@ -695,40 +768,121 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_500Medium",
   },
 
-  // Submitted waiting styles
-  submittedCard: {
+  // Joining phase
+  joiningCard: {
     backgroundColor: GameColors.cardBackground,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: GameColors.success,
+    borderColor: GameColors.brandPurple + "60",
     padding: 28,
     width: "100%",
     maxWidth: 340,
     alignItems: "center",
   },
-  submittedTitle: {
+  joiningTitle: {
+    color: GameColors.textPrimary,
+    fontSize: 22,
+    fontFamily: "Inter_700Bold",
+    marginTop: 16,
+    marginBottom: 4,
+  },
+  joiningSubtext: {
+    color: GameColors.textSecondary,
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    textAlign: "center",
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  joiningSteps: {
+    width: "100%",
+    backgroundColor: GameColors.boardBackground,
+    borderRadius: 12,
+    padding: 14,
+    gap: 8,
+  },
+  joiningStep: {
     color: GameColors.success,
+    fontSize: 13,
+    fontFamily: "Inter_500Medium",
+  },
+  joiningStepActive: {
+    color: GameColors.brandPurpleLight,
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
+  joiningStepPending: {
+    color: GameColors.textSecondary,
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    opacity: 0.6,
+  },
+
+  // Submitted waiting styles
+  submittedCard: {
+    backgroundColor: GameColors.cardBackground,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: GameColors.success + "80",
+    padding: 28,
+    width: "100%",
+    maxWidth: 340,
+    alignItems: "center",
+  },
+  submittedBadge: {
+    color: GameColors.success,
+    fontSize: 11,
+    fontFamily: "Inter_700Bold",
+    textTransform: "uppercase",
+    letterSpacing: 1.5,
+    backgroundColor: GameColors.success + "18",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 10,
+    overflow: "hidden",
+    marginBottom: 12,
+  },
+  submittedTitle: {
+    color: GameColors.textPrimary,
     fontSize: 24,
     fontFamily: "Inter_700Bold",
+    marginBottom: 16,
+  },
+  submittedScoreContainer: {
+    alignItems: "center",
     marginBottom: 8,
+  },
+  submittedScoreLabel: {
+    color: GameColors.textSecondary,
+    fontSize: 12,
+    fontFamily: "Inter_500Medium",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: 4,
   },
   submittedScore: {
     color: GameColors.accent,
-    fontSize: 48,
+    fontSize: 52,
     fontFamily: "Inter_700Bold",
-    marginBottom: 8,
+  },
+  submittedDivider: {
+    width: "80%",
+    height: 1,
+    backgroundColor: GameColors.cardBorder,
+    marginVertical: 8,
   },
   submittedWaiting: {
     color: GameColors.textPrimary,
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: "Inter_500Medium",
     textAlign: "center",
     marginBottom: 8,
   },
   submittedHint: {
     color: GameColors.textSecondary,
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: "Inter_400Regular",
     textAlign: "center",
+    lineHeight: 16,
   },
 });

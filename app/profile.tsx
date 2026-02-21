@@ -62,11 +62,12 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Text style={styles.backArrow}>{"\u2190"}</Text>
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Profile</Text>
-        <View style={{ width: 40 }} />
+        <View style={{ width: 60 }} />
       </View>
 
       <ScrollView
@@ -211,7 +212,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
+    paddingBottom: 8,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    minWidth: 60,
+  },
+  backArrow: {
+    color: GameColors.primary,
+    fontSize: 18,
+    fontFamily: "Inter_500Medium",
   },
   backText: {
     color: GameColors.primary,
@@ -237,7 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Inter_600SemiBold",
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 1.5,
     marginBottom: 8,
     marginLeft: 4,
   },
@@ -259,7 +272,7 @@ const styles = StyleSheet.create({
   },
   addressContainer: {
     backgroundColor: GameColors.boardBackground,
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 12,
   },
   addressText: {
@@ -288,7 +301,7 @@ const styles = StyleSheet.create({
   balanceItem: {
     flex: 1,
     backgroundColor: GameColors.boardBackground,
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 12,
   },
   balanceValue: {
@@ -303,7 +316,7 @@ const styles = StyleSheet.create({
   refreshButton: {
     borderWidth: 1,
     borderColor: GameColors.primary,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingVertical: 10,
     alignItems: "center",
   },
@@ -322,14 +335,14 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: "40%",
     backgroundColor: GameColors.boardBackground,
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 12,
     alignItems: "center",
   },
   statValue: {
     color: GameColors.accent,
     fontSize: 24,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "Inter_700Bold",
     marginBottom: 4,
   },
   statLabel: {
@@ -340,7 +353,7 @@ const styles = StyleSheet.create({
   },
   totalScoreRow: {
     backgroundColor: GameColors.boardBackground,
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 12,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -352,13 +365,15 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_600SemiBold",
   },
   logoutButton: {
-    backgroundColor: GameColors.danger,
-    borderRadius: 12,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: GameColors.danger,
+    borderRadius: 14,
     paddingVertical: 14,
     alignItems: "center",
   },
   logoutText: {
-    color: "#fff",
+    color: GameColors.danger,
     fontSize: 16,
     fontFamily: "Inter_600SemiBold",
   },

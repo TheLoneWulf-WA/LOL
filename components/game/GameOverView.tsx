@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { useGameStore } from "@/stores/gameStore";
 import { GameColors } from "@/constants/Colors";
+import { successNotification, errorNotification } from "@/lib/haptics";
 
 interface GameOverViewProps {
   isPractice: boolean;
@@ -24,6 +25,19 @@ export default function GameOverView({
   const score = useGameStore((s) => s.score);
   const startGame = useGameStore((s) => s.startGame);
   const router = useRouter();
+  const hapticFired = useRef(false);
+
+  // Fire haptic notification on game over
+  useEffect(() => {
+    if (hapticFired.current) return;
+    hapticFired.current = true;
+
+    if (score > 0) {
+      successNotification();
+    } else {
+      errorNotification();
+    }
+  }, [score]);
 
   const handlePlayAgain = () => {
     const newSeed = Date.now();
@@ -113,20 +127,21 @@ export default function GameOverView({
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    backgroundColor: GameColors.overlay,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
+    padding: 16,
   },
   card: {
     backgroundColor: GameColors.cardBackground,
     borderRadius: 20,
     borderWidth: 2,
     borderColor: GameColors.cardBorder,
-    padding: 32,
+    padding: 28,
     alignItems: "center",
-    width: "80%",
-    maxWidth: 320,
+    width: "100%",
+    maxWidth: 340,
   },
   gameOverTitle: {
     color: GameColors.textPrimary,
@@ -140,13 +155,15 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     color: GameColors.textSecondary,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Inter_500Medium",
+    textTransform: "uppercase",
+    letterSpacing: 1,
     marginBottom: 4,
   },
   scoreValue: {
     color: GameColors.accent,
-    fontSize: 48,
+    fontSize: 52,
     fontFamily: "Inter_700Bold",
   },
   buttons: {
@@ -156,7 +173,7 @@ const styles = StyleSheet.create({
   playAgainButton: {
     backgroundColor: GameColors.primary,
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
   },
   playAgainText: {
@@ -167,7 +184,7 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: GameColors.success,
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
   },
   submitButtonText: {
@@ -189,7 +206,7 @@ const styles = StyleSheet.create({
   lobbyButton: {
     backgroundColor: "transparent",
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: GameColors.textSecondary,
     alignItems: "center",

@@ -195,10 +195,10 @@ const styles = StyleSheet.create({
   matchIdLabel: {
     color: GameColors.textSecondary,
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Inter_600SemiBold",
     marginBottom: 4,
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   matchIdValue: {
     color: GameColors.accent,
@@ -248,9 +248,9 @@ const styles = StyleSheet.create({
   detailsTitle: {
     color: GameColors.textSecondary,
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Inter_600SemiBold",
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 1.5,
     marginBottom: 12,
   },
   detailRow: {

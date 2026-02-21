@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="#0F0B1E"/>
+
+  <!-- Shield/Gem shape -->
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="50%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="innerGlow" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer glow circle -->
+  <circle cx="512" cy="470" r="280" fill="none" stroke="#7C3AED" stroke-width="3" opacity="0.3"/>
+
+  <!-- Shield shape -->
+  <path d="M512 180 L740 300 L740 520 C740 640 640 740 512 800 C384 740 284 640 284 520 L284 300 Z"
+        fill="url(#shieldGrad)" stroke="#A78BFA" stroke-width="4"/>
+
+  <!-- Inner glow -->
+  <path d="M512 200 L720 312 L720 516 C720 628 626 722 512 778 C398 722 304 628 304 516 L304 312 Z"
+        fill="url(#innerGlow)"/>
+
+  <!-- Gem facet lines -->
+  <path d="M512 240 L512 760" stroke="#A78BFA" stroke-width="2" opacity="0.3"/>
+  <path d="M320 380 L700 380" stroke="#A78BFA" stroke-width="2" opacity="0.2"/>
+
+  <!-- LOL text -->
+  <text x="512" y="530" text-anchor="middle" dominant-baseline="central"
+        font-family="Inter, Arial, sans-serif" font-weight="800" font-size="180"
+        fill="#FFFFFF" letter-spacing="12">LOL</text>
+
+  <!-- Subtitle -->
+  <text x="512" y="920" text-anchor="middle" dominant-baseline="central"
+        font-family="Inter, Arial, sans-serif" font-weight="600" font-size="48"
+        fill="#9BA1A6" letter-spacing="8">LAND OF LEAL</text>
+</svg>

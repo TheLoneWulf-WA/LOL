@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { GameColors } from "@/constants/Colors";
 import { OnChainMatch } from "@/lib/game/types";
+import { successNotification, errorNotification } from "@/lib/haptics";
 
 interface ResultViewProps {
   match: OnChainMatch;
@@ -11,9 +12,22 @@ interface ResultViewProps {
 
 export default function ResultView({ match, currentPlayerPubkey }: ResultViewProps) {
   const router = useRouter();
+  const hapticFired = useRef(false);
 
   const isCreator = currentPlayerPubkey === match.creator;
   const isWinner = match.winner === currentPlayerPubkey;
+
+  // Fire haptic on mount based on win/loss
+  useEffect(() => {
+    if (hapticFired.current) return;
+    hapticFired.current = true;
+
+    if (isWinner) {
+      successNotification();
+    } else {
+      errorNotification();
+    }
+  }, [isWinner]);
   const isTie =
     match.creatorScore !== null &&
     match.opponentScore !== null &&
@@ -44,9 +58,14 @@ export default function ResultView({ match, currentPlayerPubkey }: ResultViewPro
     router.replace("/match/create");
   };
 
+  const resultEmoji = isWinner || (isTie && isCreator)
+    ? "\uD83C\uDFC6"
+    : "\u2694\uFE0F";
+
   return (
     <View style={styles.overlay}>
       <View style={[styles.card, { borderColor: resultBorderColor }]}>
+        <Text style={styles.resultEmoji}>{resultEmoji}</Text>
         <Text
           style={[
             styles.resultTitle,
@@ -156,7 +175,7 @@ export default function ResultView({ match, currentPlayerPubkey }: ResultViewPro
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    backgroundColor: GameColors.overlay,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
@@ -171,10 +190,14 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 340,
   },
+  resultEmoji: {
+    fontSize: 48,
+    marginBottom: 8,
+  },
   resultTitle: {
-    fontSize: 30,
+    fontSize: 28,
     fontFamily: "Inter_700Bold",
-    marginBottom: 24,
+    marginBottom: 20,
     textAlign: "center",
   },
   scoresContainer: {
@@ -210,16 +233,16 @@ const styles = StyleSheet.create({
   prizeSection: {
     width: "100%",
     backgroundColor: GameColors.boardBackground,
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 16,
     marginBottom: 24,
   },
   prizeTitle: {
     color: GameColors.textSecondary,
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Inter_600SemiBold",
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 1.5,
     marginBottom: 12,
   },
   prizeRow: {
@@ -244,7 +267,7 @@ const styles = StyleSheet.create({
   playAgainButton: {
     backgroundColor: GameColors.primary,
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
   },
   playAgainText: {
@@ -255,7 +278,7 @@ const styles = StyleSheet.create({
   lobbyButton: {
     backgroundColor: "transparent",
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: GameColors.textSecondary,
     alignItems: "center",

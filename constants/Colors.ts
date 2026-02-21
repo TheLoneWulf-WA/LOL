@@ -51,4 +51,15 @@ export const GameColors = {
   textPrimary: '#ECEDEE',
   textSecondary: '#9BA1A6',
   textAccent: '#FFDC00',
+
+  // Brand / Decorative
+  brandPurple: '#7C3AED',
+  brandPurpleLight: '#A78BFA',
+  brandPurpleDark: '#5B21B6',
+  headerGradientStart: '#1a1a2e',
+  headerGradientEnd: '#0a0a1a',
+  glowPurple: 'rgba(124, 58, 237, 0.3)',
+  glowAccent: 'rgba(255, 220, 0, 0.15)',
+  boardGlow: 'rgba(15, 52, 96, 0.6)',
+  overlay: 'rgba(10, 10, 26, 0.85)',
 };

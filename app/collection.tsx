@@ -50,9 +50,10 @@ export default function CollectionScreen() {
     }
     return (
       <View style={styles.emptyContainer}>
+        <Text style={styles.emptyIcon}>{"\uD83D\uDC8E"}</Text>
         <Text style={styles.emptyTitle}>No NFTs Found</Text>
         <Text style={styles.emptyText}>
-          Connect a wallet with NFTs to get started.
+          Your NFT collection will appear here. Mint or win NFTs to build your collection.
         </Text>
       </View>
     );
@@ -69,11 +70,12 @@ export default function CollectionScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Text style={styles.backArrow}>{"\u2190"}</Text>
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>My Collection</Text>
-        <View style={{ width: 40 }} />
+        <View style={{ width: 60 }} />
       </View>
 
       {(isLoadingNFTs || isLoading) && nfts.length === 0 ? (
@@ -110,7 +112,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
+    paddingBottom: 8,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    minWidth: 60,
+  },
+  backArrow: {
+    color: GameColors.primary,
+    fontSize: 18,
+    fontFamily: "Inter_500Medium",
   },
   backText: {
     color: GameColors.primary,
@@ -156,7 +170,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 80,
+    paddingTop: 60,
+    paddingHorizontal: 24,
+  },
+  emptyIcon: {
+    fontSize: 40,
+    marginBottom: 12,
   },
   emptyTitle: {
     color: GameColors.textPrimary,
@@ -170,6 +189,6 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     textAlign: "center",
     lineHeight: 20,
-    paddingHorizontal: 32,
+    maxWidth: 260,
   },
 });

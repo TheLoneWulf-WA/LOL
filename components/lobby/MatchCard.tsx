@@ -43,9 +43,11 @@ export default function MatchCard({ match, onPress }: MatchCardProps) {
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.header}>
         <Text style={styles.matchId}>Match #{match.id.slice(0, 8)}</Text>
-        <Text style={[styles.status, { color: statusColor }]}>
-          {statusLabel}
-        </Text>
+        <View style={[styles.statusBadge, { backgroundColor: (statusColor ?? GameColors.textSecondary) + "20" }]}>
+          <Text style={[styles.status, { color: statusColor }]}>
+            {statusLabel}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.infoRow}>
@@ -85,7 +87,7 @@ export default function MatchCard({ match, onPress }: MatchCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: GameColors.cardBackground,
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 16,
     borderWidth: 1,
     borderColor: GameColors.cardBorder,
@@ -94,16 +96,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   matchId: {
     color: GameColors.textPrimary,
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: "Inter_600SemiBold",
   },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
   status: {
-    fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
   },
   infoRow: {
     flexDirection: "row",
@@ -131,7 +138,7 @@ const styles = StyleSheet.create({
   wager: {
     color: GameColors.accent,
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Inter_600SemiBold",
   },
   seed: {
     color: GameColors.textSecondary,
@@ -140,10 +147,10 @@ const styles = StyleSheet.create({
   },
   joinButton: {
     backgroundColor: GameColors.success,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 10,
   },
   joinButtonText: {
     color: "#fff",
