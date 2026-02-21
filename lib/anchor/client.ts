@@ -40,7 +40,7 @@ const DISCRIMINATOR_CANCEL_MATCH = Buffer.from(
 );
 
 // 8-byte discriminator for the MatchAccount struct (from the IDL)
-const MATCH_ACCOUNT_DISCRIMINATOR = Buffer.from([
+export const MATCH_ACCOUNT_DISCRIMINATOR = Buffer.from([
   235, 36, 243, 39, 81, 16, 144, 87,
 ]);
 
@@ -62,14 +62,14 @@ const SUBMIT_RESULT_ARGS_LAYOUT = borsh.struct([
 // ---------------------------------------------------------------------------
 // Borsh layout for MatchAccount deserialization
 // ---------------------------------------------------------------------------
-const MATCH_STATUS_LAYOUT = borsh.rustEnum([
+export const MATCH_STATUS_LAYOUT = borsh.rustEnum([
   borsh.struct([], "Waiting"),
   borsh.struct([], "Active"),
   borsh.struct([], "Settled"),
   borsh.struct([], "Cancelled"),
 ]);
 
-const MATCH_ACCOUNT_LAYOUT = borsh.struct([
+export const MATCH_ACCOUNT_LAYOUT = borsh.struct([
   borsh.publicKey("creator"),
   borsh.publicKey("opponent"),
   borsh.str("matchId"),
@@ -378,7 +378,7 @@ export function buildCancelMatchTransaction(
 // ---------------------------------------------------------------------------
 
 /** Map the borsh-decoded rustEnum status to our MatchStatus string. */
-function decodeMatchStatus(raw: Record<string, unknown>): MatchStatus {
+export function decodeMatchStatus(raw: Record<string, unknown>): MatchStatus {
   if ("Waiting" in raw) return "waiting";
   if ("Active" in raw) return "playing";
   if ("Settled" in raw) return "settled";
@@ -386,7 +386,7 @@ function decodeMatchStatus(raw: Record<string, unknown>): MatchStatus {
   return "waiting";
 }
 
-const PUBKEY_DEFAULT = new PublicKey(new Uint8Array(32));
+export const PUBKEY_DEFAULT = new PublicKey(new Uint8Array(32));
 
 /**
  * Fetch and deserialize a MatchAccount from on-chain data.

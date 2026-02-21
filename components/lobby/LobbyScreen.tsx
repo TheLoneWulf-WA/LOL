@@ -1,8 +1,18 @@
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GameColors } from "@/constants/Colors";
 import { useMatchStore } from "@/stores/matchStore";
+import { useMatchDiscovery } from "@/hooks/useMatchDiscovery";
 import WalletBadge from "./WalletBadge";
 import MatchCard from "./MatchCard";
 
@@ -10,6 +20,7 @@ export default function LobbyScreen() {
   const router = useRouter();
   const lobbyMatches = useMatchStore((s) => s.lobbyMatches);
   const myMatches = useMatchStore((s) => s.myMatches);
+  const { isLoading, refresh } = useMatchDiscovery();
 
   const navigateToMatch = (matchId: string) => {
     router.push({ pathname: "/match/[id]", params: { id: matchId } });
@@ -17,83 +28,106 @@ export default function LobbyScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Land of Leal</Text>
-        <WalletBadge />
-      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={refresh}
+            tintColor={GameColors.accent}
+            colors={[GameColors.accent]}
+          />
+        }
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Land of Leal</Text>
+          <WalletBadge />
+        </View>
 
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={() => router.push("/match/create")}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.createButtonText}>Create Match</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.quickPlayButton}
-          onPress={() => navigateToMatch(String(Date.now()))}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.quickPlayButtonText}>Quick Play (Practice)</Text>
-        </TouchableOpacity>
-
-        <View style={styles.secondaryActions}>
+        <View style={styles.actions}>
           <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={() => router.push("/collection")}
+            style={styles.createButton}
+            onPress={() => router.push("/match/create")}
             activeOpacity={0.8}
           >
-            <Text style={styles.secondaryButtonText}>Collection</Text>
+            <Text style={styles.createButtonText}>Create Match</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={() => router.push("/profile")}
+            style={styles.quickPlayButton}
+            onPress={() => navigateToMatch(String(Date.now()))}
             activeOpacity={0.8}
           >
-            <Text style={styles.secondaryButtonText}>Profile</Text>
+            <Text style={styles.quickPlayButtonText}>
+              Quick Play (Practice)
+            </Text>
           </TouchableOpacity>
-        </View>
-      </View>
 
-      {myMatches.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>My Matches</Text>
-          <FlatList
-            data={myMatches}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <MatchCard
-                match={item}
-                onPress={() => navigateToMatch(item.id)}
-              />
-            )}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-            scrollEnabled={false}
-          />
+          <View style={styles.secondaryActions}>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => router.push("/collection")}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.secondaryButtonText}>Collection</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => router.push("/profile")}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.secondaryButtonText}>Profile</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      )}
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Open Matches</Text>
-        {lobbyMatches.length === 0 ? (
-          <Text style={styles.emptyText}>No open matches. Create one!</Text>
-        ) : (
-          <FlatList
-            data={lobbyMatches}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <MatchCard
-                match={item}
-                onPress={() => navigateToMatch(item.id)}
-              />
-            )}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-            scrollEnabled={false}
-          />
+        {myMatches.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>My Matches</Text>
+            <FlatList
+              data={myMatches}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <MatchCard
+                  match={item}
+                  onPress={() => navigateToMatch(item.id)}
+                />
+              )}
+              ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+              scrollEnabled={false}
+            />
+          </View>
         )}
-      </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Open Matches</Text>
+            {isLoading && (
+              <ActivityIndicator size="small" color={GameColors.accent} />
+            )}
+          </View>
+          {lobbyMatches.length === 0 ? (
+            <Text style={styles.emptyText}>
+              {isLoading
+                ? "Searching for matches..."
+                : "No open matches. Create one!"}
+            </Text>
+          ) : (
+            <FlatList
+              data={lobbyMatches}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <MatchCard
+                  match={item}
+                  onPress={() => navigateToMatch(item.id)}
+                />
+              )}
+              ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+              scrollEnabled={false}
+            />
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -102,6 +136,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: GameColors.screenBackground,
+  },
+  scrollContent: {
     padding: 16,
   },
   header: {
@@ -164,11 +200,16 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
   sectionTitle: {
     color: GameColors.textSecondary,
     fontSize: 14,
     fontFamily: "Inter_500Medium",
-    marginBottom: 12,
     textTransform: "uppercase",
     letterSpacing: 1,
   },

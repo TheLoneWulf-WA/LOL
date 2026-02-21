@@ -1,10 +1,26 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useGameStore } from "@/stores/gameStore";
 import { GameColors } from "@/constants/Colors";
 
-export default function GameOverView() {
+interface GameOverViewProps {
+  isPractice: boolean;
+  onSubmitScore?: () => void;
+  isSubmitting?: boolean;
+}
+
+export default function GameOverView({
+  isPractice,
+  onSubmitScore,
+  isSubmitting,
+}: GameOverViewProps) {
   const score = useGameStore((s) => s.score);
   const startGame = useGameStore((s) => s.startGame);
   const router = useRouter();
@@ -29,21 +45,65 @@ export default function GameOverView() {
         </View>
 
         <View style={styles.buttons}>
-          <TouchableOpacity
-            style={styles.playAgainButton}
-            onPress={handlePlayAgain}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.playAgainText}>Play Again</Text>
-          </TouchableOpacity>
+          {isPractice ? (
+            <>
+              <TouchableOpacity
+                style={styles.playAgainButton}
+                onPress={handlePlayAgain}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.playAgainText}>Play Again</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.lobbyButton}
-            onPress={handleBackToLobby}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.lobbyText}>Back to Lobby</Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.lobbyButton}
+                onPress={handleBackToLobby}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.lobbyText}>Back to Lobby</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {isSubmitting ? (
+                <View style={styles.submittingContainer}>
+                  <ActivityIndicator
+                    size="large"
+                    color={GameColors.accent}
+                  />
+                  <Text style={styles.submittingText}>
+                    Submitting score on-chain...
+                  </Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={styles.submitButton}
+                  onPress={onSubmitScore}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.submitButtonText}>
+                    Submit Score to Blockchain
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                style={styles.lobbyButton}
+                onPress={handleBackToLobby}
+                activeOpacity={0.8}
+                disabled={isSubmitting}
+              >
+                <Text
+                  style={[
+                    styles.lobbyText,
+                    isSubmitting && { opacity: 0.5 },
+                  ]}
+                >
+                  Back to Lobby
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
     </View>
@@ -103,6 +163,28 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontFamily: "Inter_600SemiBold",
+  },
+  submitButton: {
+    backgroundColor: GameColors.success,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontFamily: "Inter_600SemiBold",
+  },
+  submittingContainer: {
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 8,
+  },
+  submittingText: {
+    color: GameColors.accent,
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
+    textAlign: "center",
   },
   lobbyButton: {
     backgroundColor: "transparent",
